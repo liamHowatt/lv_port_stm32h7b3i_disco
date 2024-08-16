@@ -7,7 +7,7 @@
  *      INCLUDES
  *********************/
 #include "hal_stm_lvgl/tft/tft.h"
-#include "lvgl/src/hal/lv_hal.h"
+#include "lvgl/lvgl.h"
 
 #include "stm32h7b3i_discovery.h"
 #include "stm32h7b3i_discovery_ts.h"
@@ -23,7 +23,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
+static void touchpad_read(lv_indev_t *drv, lv_indev_data_t *data);
 
 /**********************
  *  STATIC VARIABLES
@@ -51,12 +51,9 @@ void touchpad_init(void)
 
     BSP_TS_Init(TS_INSTANCE, &hTS);
 
-    static lv_indev_drv_t indev_drv;                /*Descriptor of an input device driver*/
-    lv_indev_drv_init(&indev_drv);                  /*Basic initialization*/
-    indev_drv.type = LV_INDEV_TYPE_POINTER;         /*The touchpad is pointer type device*/
-    indev_drv.read_cb = touchpad_read;
-
-    lv_indev_drv_register(&indev_drv);
+    lv_indev_t * indev = lv_indev_create();
+    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); /*The touchpad is a pointer type device*/
+    lv_indev_set_read_cb(indev, touchpad_read);
 }
 
 /**********************
@@ -64,13 +61,9 @@ void touchpad_init(void)
  **********************/
 
 /**
- * Read an input device
- * @param indev_id id of the input device to read
- * @param x put the x coordinate here
- * @param y put the y coordinate here
- * @return true: the device is pressed, false: released
+ * Touchpad indev read callback
  */
-static void touchpad_read(lv_indev_drv_t *indev, lv_indev_data_t *data)
+static void touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
 {
     /* Read your touchpad */
     static int16_t last_x = 0;

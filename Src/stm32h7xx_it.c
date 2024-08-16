@@ -26,7 +26,7 @@
 
 #include "stm32h7b3i_discovery_lcd.h"
 
-#include "lvgl/src/hal/lv_hal_tick.h"
+#include "lvgl/lvgl.h"
 #include "hal_stm_lvgl/tft/tft.h"
 /* USER CODE END Includes */
 

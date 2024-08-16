@@ -1,14 +1,17 @@
 /* Includes ------------------------------------------------------------------*/
 //#include "main.h"
 #include "stm32h7xx.h"
+#include "stm32h7b3i_discovery_lcd.h"
 #include "stm32h7b3i_discovery_sdram.h"
 
 #include "lvgl/lvgl.h"
+#include "lvgl/src/draw/dma2d/lv_draw_dma2d.h"
 #include "hal_stm_lvgl/tft/tft.h"
 #include "hal_stm_lvgl/touchpad/touchpad.h"
 #include "lvgl/demos/lv_demos.h"
 
 /* Private function prototypes -----------------------------------------------*/
+static void transfer_complete_interrupt_handler(DMA2D_HandleTypeDef * hdma);
 static void SystemClock_Config(void);
 static void MPU_Config(void);
 static void CPU_CACHE_Enable(void);
@@ -28,6 +31,8 @@ int main(void)
 
 	__HAL_RCC_CRC_CLK_ENABLE();
 
+	hlcd_dma2d.XferCpltCallback = transfer_complete_interrupt_handler;
+
 	lv_init();
 	tft_init();
 	touchpad_init();
@@ -35,15 +40,23 @@ int main(void)
 	//lv_demo_benchmark();
 	//lv_demo_music();
 	//lv_demo_stress();
-	lv_demo_widgets();
+	//lv_demo_widgets();
+	lv_demo_render(LV_DEMO_RENDER_SCENE_FILL, LV_OPA_50);
 
 	while (1)
 	{
 		HAL_Delay(5);
-		lv_task_handler();
+		lv_timer_handler();
 	}
 }
 
+static void transfer_complete_interrupt_handler(DMA2D_HandleTypeDef * hdma)
+{
+	LV_UNUSED(hdma);
+#if LV_USE_DRAW_DMA2D_INTERRUPT
+	lv_draw_dma2d_transfer_complete_interrupt_handler();
+#endif
+}
 
 /**
   * @brief  System Clock Configuration
