@@ -37,11 +37,11 @@ int main(void)
 	tft_init();
 	touchpad_init();
 
-	//lv_demo_benchmark();
-	//lv_demo_music();
+	lv_demo_benchmark();
+	// lv_demo_render(LV_DEMO_RENDER_SCENE_IMAGE_NORMAL_1, LV_OPA_100);
+	// lv_demo_widgets();
 	//lv_demo_stress();
-	//lv_demo_widgets();
-	lv_demo_render(LV_DEMO_RENDER_SCENE_FILL, LV_OPA_50);
+	// lv_demo_music();
 
 	while (1)
 	{
